@@ -3,7 +3,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Heart, Minus, Plus, Truck, ShieldCheck, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import { getProduct, type Product } from "@/data/products";
-import { useCatalog } from "@/lib/catalog";
+import { useCatalog, productImagesList } from "@/lib/catalog";
 import { formatPKR } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
@@ -70,6 +70,10 @@ function ProductPage() {
     toast.success("Saved to wishlist");
   };
 
+  const gallery = productImagesList((product as any).imageKey || (product as any).image_key);
+  const [activeImg, setActiveImg] = useState<string | null>(null);
+  const currentImg = activeImg || gallery[0] || product.image;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <nav className="mb-6 text-xs uppercase tracking-widest text-muted-foreground">
@@ -85,14 +89,32 @@ function ProductPage() {
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <div className="border border-border bg-secondary">
-          <img
-            src={product.image}
-            alt={product.name}
-            width={1200}
-            height={1200}
-            className="aspect-square w-full object-cover"
-          />
+        <div className="space-y-3">
+          <div className="border border-border bg-secondary">
+            <img
+              src={currentImg}
+              alt={product.name}
+              width={1200}
+              height={1200}
+              className="aspect-square w-full object-cover"
+            />
+          </div>
+          {gallery.length > 1 && (
+            <div className="flex flex-wrap gap-2">
+              {gallery.map((imgUrl, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActiveImg(imgUrl)}
+                  className={`h-16 w-16 overflow-hidden border-2 bg-secondary ${
+                    currentImg === imgUrl ? "border-primary" : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <img src={imgUrl} alt="" className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div>

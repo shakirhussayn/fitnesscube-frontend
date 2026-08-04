@@ -38,6 +38,13 @@ export function imageFor(key: string | null | undefined) {
   return productImages[key] || treadmill;
 }
 
+export function productImagesList(key: string | null | undefined): string[] {
+  if (!key) return [treadmill];
+  const list = key.split(/[\n,]+/).map((k) => k.trim()).filter(Boolean);
+  if (list.length === 0) return [treadmill];
+  return list.map(imageFor);
+}
+
 export type ProductRow = {
   id: string;
   slug: string;

@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPKR } from "@/lib/format";
-import { imageFor, imageKeys, type AdminProduct } from "@/lib/catalog";
+import { imageFor, imageKeys, productImagesList, type AdminProduct } from "@/lib/catalog";
 import { categories } from "@/data/products";
 import { useAdminProducts } from "@/lib/admin";
 
@@ -157,20 +157,36 @@ function AdminProducts() {
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image file size should be under 5MB");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        setDraft((prev) => ({ ...prev, image_key: reader.result as string }));
-        toast.success("Image uploaded!");
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    let loaded = 0;
+    const newImages: string[] = [];
+
+    files.forEach((file) => {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`File ${file.name} exceeds 5MB limit`);
+        loaded++;
+        return;
       }
-    };
-    reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          newImages.push(reader.result);
+        }
+        loaded++;
+        if (loaded === files.length) {
+          setDraft((prev) => {
+            const currentList = prev.image_key
+              ? prev.image_key.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean)
+              : [];
+            const combined = [...currentList, ...newImages].join("\n");
+            return { ...prev, image_key: combined };
+          });
+          toast.success(`${newImages.length} photo(s) added!`);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const remove = async (p: AdminProduct) => {
@@ -243,7 +259,7 @@ function AdminProducts() {
                 onChange={(e) => setDraft({ ...draft, subcategory: e.target.value })}
               />
             </Field>
-            <Field label="Product Photo" wide>
+            <Field label="Product Photo(s)" wide>
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <select
@@ -255,7 +271,7 @@ function AdminProducts() {
                       }
                     }}
                   >
-                    <option value="custom">Custom URL / File Upload</option>
+                    <option value="custom">Custom URLs / Multi-Photo Upload</option>
                     {imageKeys.map((k) => (
                       <option key={k} value={k}>
                         Preset: {k}
@@ -263,14 +279,28 @@ function AdminProducts() {
                     ))}
                   </select>
                   <label className="cursor-pointer border border-border bg-secondary px-3 py-2 text-xs font-bold uppercase tracking-widest hover:border-primary">
-                    Upload Photo File
-                    <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                    Upload Photo(s)
+                    <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} />
                   </label>
-                  <img src={imageFor(draft.image_key)} alt="Preview" className="h-10 w-10 border border-border object-cover" />
+                  {draft.image_key && (
+                    <button
+                      type="button"
+                      onClick={() => setDraft({ ...draft, image_key: "" })}
+                      className="border border-destructive/50 px-2 py-1 text-[10px] uppercase text-destructive hover:bg-destructive/10"
+                    >
+                      Clear Photos
+                    </button>
+                  )}
                 </div>
-                <input
+                <div className="flex flex-wrap gap-2">
+                  {productImagesList(draft.image_key).map((imgUrl, i) => (
+                    <img key={i} src={imgUrl} alt="Preview" className="h-12 w-12 border border-border object-cover" />
+                  ))}
+                </div>
+                <textarea
+                  rows={2}
                   className={inputCls}
-                  placeholder="Or paste an Image URL (https://...)"
+                  placeholder="Paste Image URLs (one per line or separated by commas)"
                   value={draft.image_key}
                   onChange={(e) => setDraft({ ...draft, image_key: e.target.value })}
                 />

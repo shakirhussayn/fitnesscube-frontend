@@ -1,0 +1,1 @@
+function e(e){return`\u20A8 ${e.toLocaleString(`en-PK`)}`}export{e as t};
