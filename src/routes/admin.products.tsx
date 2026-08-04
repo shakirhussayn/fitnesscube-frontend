@@ -204,6 +204,15 @@ function AdminProducts() {
     });
   };
 
+  const makePrimary = (index: number) => {
+    const list = productImagesList(draft.image_key);
+    if (index <= 0 || index >= list.length) return;
+    const [selected] = list.splice(index, 1);
+    list.unshift(selected);
+    setDraft((prev) => ({ ...prev, image_key: list.join("\n") }));
+    toast.success("Set as main cover photo!");
+  };
+
   const remove = async (p: AdminProduct) => {
     if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
     const { error } = await supabase.from("products").delete().eq("id", p.id);
@@ -309,7 +318,26 @@ function AdminProducts() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {productImagesList(draft.image_key).map((imgUrl, i) => (
-                    <img key={i} src={imgUrl} alt="Preview" className="h-12 w-12 border border-border object-cover" />
+                    <div key={i} className="group relative">
+                      <img
+                        src={imgUrl}
+                        alt="Preview"
+                        className={`h-16 w-16 border-2 object-cover ${i === 0 ? "border-primary" : "border-border"}`}
+                      />
+                      {i === 0 ? (
+                        <span className="absolute bottom-0 left-0 right-0 bg-primary py-0.5 text-center text-[9px] font-bold uppercase text-primary-foreground">
+                          Main
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => makePrimary(i)}
+                          className="absolute inset-0 hidden items-center justify-center bg-black/75 p-1 text-center text-[9px] font-bold uppercase text-white group-hover:flex"
+                        >
+                          Set Main
+                        </button>
+                      )}
+                    </div>
                   ))}
                 </div>
                 <textarea
