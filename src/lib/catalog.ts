@@ -34,15 +34,28 @@ export const imageKeys = Object.keys(productImages);
 
 export function imageFor(key: string | null | undefined) {
   if (!key) return treadmill;
-  if (key.startsWith("http://") || key.startsWith("https://") || key.startsWith("data:")) return key;
-  return productImages[key] || treadmill;
+  const trimmed = key.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:")) return trimmed;
+  return productImages[trimmed] || treadmill;
 }
 
 export function productImagesList(key: string | null | undefined): string[] {
   if (!key) return [treadmill];
-  const list = key.split(/[\n,]+/).map((k) => k.trim()).filter(Boolean);
-  if (list.length === 0) return [treadmill];
-  return list.map(imageFor);
+  const lines = key.split("\n").map((k) => k.trim()).filter(Boolean);
+  const result: string[] = [];
+  for (const line of lines) {
+    if (line.startsWith("data:") || line.startsWith("http://") || line.startsWith("https://")) {
+      result.push(line);
+    } else if (line.includes(",")) {
+      line.split(",").forEach((item) => {
+        const sub = item.trim();
+        if (sub) result.push(imageFor(sub));
+      });
+    } else {
+      result.push(imageFor(line));
+    }
+  }
+  return result.length > 0 ? result : [treadmill];
 }
 
 export type ProductRow = {

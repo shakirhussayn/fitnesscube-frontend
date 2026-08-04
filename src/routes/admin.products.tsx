@@ -163,27 +163,42 @@ function AdminProducts() {
     const newImages: string[] = [];
 
     files.forEach((file) => {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`File ${file.name} exceeds 5MB limit`);
-        loaded++;
-        return;
-      }
       const reader = new FileReader();
       reader.onload = () => {
-        if (typeof reader.result === "string") {
-          newImages.push(reader.result);
-        }
-        loaded++;
-        if (loaded === files.length) {
-          setDraft((prev) => {
-            const currentList = prev.image_key
-              ? prev.image_key.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean)
-              : [];
-            const combined = [...currentList, ...newImages].join("\n");
-            return { ...prev, image_key: combined };
-          });
-          toast.success(`${newImages.length} photo(s) added!`);
-        }
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 800;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL("image/jpeg", 0.85);
+          newImages.push(compressed);
+          loaded++;
+          if (loaded === files.length) {
+            setDraft((prev) => {
+              const currentList = prev.image_key
+                ? prev.image_key.split("\n").map((s) => s.trim()).filter(Boolean)
+                : [];
+              const combined = [...currentList, ...newImages].join("\n");
+              return { ...prev, image_key: combined };
+            });
+            toast.success(`${newImages.length} photo(s) added!`);
+          }
+        };
+        img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     });
