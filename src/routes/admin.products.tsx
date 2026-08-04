@@ -263,18 +263,29 @@ function AdminProducts() {
             <Field label="Brand">
               <input className={inputCls} value={draft.brand} onChange={(e) => setDraft({ ...draft, brand: e.target.value })} />
             </Field>
-            <Field label="Category">
-              <select
-                className={inputCls}
-                value={draft.category}
-                onChange={(e) => setDraft({ ...draft, category: e.target.value })}
-              >
-                {categories.map((c) => (
-                  <option key={c.slug} value={c.slug}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+            <Field label="Category (select or type new)">
+              <div className="space-y-2">
+                <input
+                  className={inputCls}
+                  value={draft.category}
+                  placeholder="e.g. cardio-equipment, boxing, recovery"
+                  onChange={(e) => setDraft({ ...draft, category: e.target.value })}
+                />
+                <div className="flex flex-wrap gap-1 text-[10px]">
+                  {categories.map((c) => (
+                    <button
+                      key={c.slug}
+                      type="button"
+                      onClick={() => setDraft({ ...draft, category: c.slug })}
+                      className={`border px-2 py-0.5 uppercase ${
+                        draft.category === c.slug ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {c.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </Field>
             <Field label="Type (subcategory)">
               <input

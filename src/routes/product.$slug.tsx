@@ -74,6 +74,13 @@ function ProductPage() {
   const [activeImg, setActiveImg] = useState<string | null>(null);
   const currentImg = activeImg || gallery[0] || product.image;
 
+  const whatsappOrder = () => {
+    const text = encodeURIComponent(
+      `Hi FitnessCube! I am interested in ordering: ${product.name} (${formatPKR(price)}). Is it currently available?`
+    );
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <nav className="mb-6 text-xs uppercase tracking-widest text-muted-foreground">
@@ -203,6 +210,14 @@ function ProductPage() {
               className="h-12 flex-1 bg-primary px-8 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-primary/85 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {product.inStock ? "Add to cart" : "Out of stock"}
+            </button>
+
+            <button
+              type="button"
+              onClick={whatsappOrder}
+              className="h-12 border border-emerald-600 bg-emerald-600/10 px-5 text-xs font-bold uppercase tracking-widest text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
+            >
+              Order on WhatsApp
             </button>
 
             <button
