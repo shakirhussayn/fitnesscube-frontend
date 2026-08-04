@@ -156,6 +156,23 @@ function AdminProducts() {
     await refresh();
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size should be under 5MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setDraft((prev) => ({ ...prev, image_key: reader.result as string }));
+        toast.success("Image uploaded!");
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const remove = async (p: AdminProduct) => {
     if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
     const { error } = await supabase.from("products").delete().eq("id", p.id);
@@ -226,20 +243,37 @@ function AdminProducts() {
                 onChange={(e) => setDraft({ ...draft, subcategory: e.target.value })}
               />
             </Field>
-            <Field label="Photo">
-              <div className="flex items-center gap-3">
-                <select
+            <Field label="Product Photo" wide>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <select
+                    className="h-10 border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                    value={imageKeys.includes(draft.image_key) ? draft.image_key : "custom"}
+                    onChange={(e) => {
+                      if (e.target.value !== "custom") {
+                        setDraft({ ...draft, image_key: e.target.value });
+                      }
+                    }}
+                  >
+                    <option value="custom">Custom URL / File Upload</option>
+                    {imageKeys.map((k) => (
+                      <option key={k} value={k}>
+                        Preset: {k}
+                      </option>
+                    ))}
+                  </select>
+                  <label className="cursor-pointer border border-border bg-secondary px-3 py-2 text-xs font-bold uppercase tracking-widest hover:border-primary">
+                    Upload Photo File
+                    <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                  </label>
+                  <img src={imageFor(draft.image_key)} alt="Preview" className="h-10 w-10 border border-border object-cover" />
+                </div>
+                <input
                   className={inputCls}
+                  placeholder="Or paste an Image URL (https://...)"
                   value={draft.image_key}
                   onChange={(e) => setDraft({ ...draft, image_key: e.target.value })}
-                >
-                  {imageKeys.map((k) => (
-                    <option key={k} value={k}>
-                      {k}
-                    </option>
-                  ))}
-                </select>
-                <img src={imageFor(draft.image_key)} alt="" className="h-10 w-10 object-cover" />
+                />
               </div>
             </Field>
             <Field label="Price (PKR)">

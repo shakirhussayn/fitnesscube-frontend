@@ -33,7 +33,9 @@ export const productImages: Record<string, string> = {
 export const imageKeys = Object.keys(productImages);
 
 export function imageFor(key: string | null | undefined) {
-  return (key && productImages[key]) || treadmill;
+  if (!key) return treadmill;
+  if (key.startsWith("http://") || key.startsWith("https://") || key.startsWith("data:")) return key;
+  return productImages[key] || treadmill;
 }
 
 export type ProductRow = {
