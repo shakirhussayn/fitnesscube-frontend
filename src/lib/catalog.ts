@@ -116,18 +116,16 @@ async function fetchCatalog(): Promise<AdminProduct[]> {
 }
 
 /**
- * Live storefront catalogue. Renders instantly from the bundled catalogue,
- * then swaps in whatever the shop owner has published in the admin area.
+ * Live storefront catalogue — fetches only from Supabase.
+ * No static fallback so deleted products never flash on screen.
  */
 export function useCatalog(): Product[] {
   const { data } = useQuery({
     queryKey: ["catalog"],
     queryFn: fetchCatalog,
-    initialData: fallbackProducts as unknown as AdminProduct[],
-    initialDataUpdatedAt: 0,
     staleTime: 60_000,
   });
-  return data;
+  return data ?? [];
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | undefined> {
@@ -144,7 +142,7 @@ export async function fetchProductBySlug(slug: string): Promise<Product | undefi
   } catch (err) {
     console.error("fetchProductBySlug error:", err);
   }
-  return fallbackProducts.find((p) => p.slug === slug);
+  return undefined;
 }
 
 export function useCatalogProduct(slug: string): Product | undefined {
