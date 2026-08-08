@@ -26,7 +26,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <div className="border-b border-border bg-secondary/60">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
-          <p>Free delivery on orders over ₨ 25,000 across Pakistan</p>
+          <p>Now accepting orders via WhatsApp & Online — Nationwide Delivery</p>
           <div className="hidden sm:flex items-center gap-4">
             <a
               href="https://wa.me/923372486635?text=Hi%20FitnessCube!%20I%20have%20an%20inquiry."
@@ -54,7 +54,15 @@ export function Header() {
           {open ? <Menu className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
 
-        <Logo />
+        <div className="flex flex-col">
+          <Logo />
+          <a
+            href="tel:+923372486635"
+            className="mt-0.5 flex items-center gap-1 text-[11px] font-bold tracking-wider text-emerald-500 hover:text-emerald-400"
+          >
+            <Phone className="h-2.5 w-2.5" /> Helpline: 0337 2486635
+          </a>
+        </div>
 
         <form onSubmit={submit} className="ml-auto hidden max-w-md flex-1 items-center lg:flex">
           <input
