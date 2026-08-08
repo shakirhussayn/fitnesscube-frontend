@@ -76,7 +76,7 @@ function Wishlist() {
           <p className="text-muted-foreground">Nothing saved yet.</p>
           <Link
             to="/shop"
-            search={{ q: undefined, category: undefined, min: 0, max: 250000, sort: "featured" }}
+            search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }}
             className="mt-6 inline-block bg-primary px-6 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground"
           >
             Browse products

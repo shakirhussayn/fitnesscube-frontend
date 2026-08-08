@@ -6,28 +6,31 @@ import { useCatalog } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { PriceRange, SortSelect, sortProducts, type SortOption } from "@/components/ProductFilters";
 
-const PRICE_BOUND = 250000;
-
 type ShopSearch = {
-  q: string | undefined;
-  category: string | undefined;
-  min: number;
-  max: number;
-  sort: SortOption;
+  q?: string;
+  category?: string;
+  min?: number;
+  max?: number;
+  sort?: SortOption;
 };
-
-function toNumber(value: unknown, fallback: number) {
-  const n = typeof value === "number" ? value : Number(value);
-  return Number.isFinite(n) && n >= 0 ? n : fallback;
-}
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (search: Record<string, unknown>): ShopSearch => ({
     q: typeof search["q"] === "string" && search["q"] ? search["q"] : undefined,
     category:
       typeof search["category"] === "string" && search["category"] ? search["category"] : undefined,
-    min: toNumber(search["min"], 0),
-    max: toNumber(search["max"], PRICE_BOUND),
+    min:
+      typeof search["min"] === "number"
+        ? search["min"]
+        : typeof search["min"] === "string" && search["min"]
+          ? Number(search["min"])
+          : undefined,
+    max:
+      typeof search["max"] === "number"
+        ? search["max"]
+        : typeof search["max"] === "string" && search["max"]
+          ? Number(search["max"])
+          : undefined,
     sort: typeof search["sort"] === "string" ? (search["sort"] as SortOption) : "featured",
   }),
 
@@ -55,8 +58,8 @@ function Shop() {
     setTerm(q ?? "");
   }, [q]);
 
-  const safeSort: SortOption = ["featured", "price-asc", "price-desc", "rating"].includes(sort)
-    ? sort
+  const safeSort: SortOption = ["featured", "price-asc", "price-desc", "rating"].includes(sort ?? "featured")
+    ? (sort as SortOption)
     : "featured";
 
   const catalog = useCatalog();
@@ -70,13 +73,16 @@ function Shop() {
         [p.name, p.brand, p.subcategory, p.description].join(" ").toLowerCase().includes(needle),
       );
     }
-    const lo = Math.min(min, max);
-    const hi = Math.max(min, max);
-    list = list.filter((p) => p.price >= lo && p.price <= hi);
+    if (min !== undefined && !isNaN(min)) {
+      list = list.filter((p) => p.price >= min);
+    }
+    if (max !== undefined && !isNaN(max)) {
+      list = list.filter((p) => p.price <= max);
+    }
     return sortProducts(list, safeSort);
-  }, [q, category, min, max, safeSort]);
+  }, [q, category, min, max, safeSort, catalog]);
 
-  const filtersActive = Boolean(q || category) || min > 0 || max < PRICE_BOUND || safeSort !== "featured";
+  const filtersActive = Boolean(q || category || min !== undefined || max !== undefined || safeSort !== "featured");
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
@@ -133,14 +139,13 @@ function Shop() {
           <PriceRange
             min={min}
             max={max}
-            bound={PRICE_BOUND}
             onChange={(next) => navigate({ search: (prev: ShopSearch) => ({ ...prev, ...next }) })}
           />
 
           {filtersActive && (
             <Link
               to="/shop"
-              search={{ q: undefined, category: undefined, min: 0, max: PRICE_BOUND, sort: "featured" }}
+              search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }}
               className="inline-block border border-border px-3 py-2 text-xs uppercase tracking-widest hover:border-primary hover:text-primary"
             >
               Clear filters

@@ -5,8 +5,6 @@ import { useCatalog } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { PriceRange, SortSelect, sortProducts, type SortOption } from "@/components/ProductFilters";
 
-const PRICE_BOUND = 250000;
-
 export const Route = createFileRoute("/category/$slug")({
   loader: ({ params }) => {
     const category = getCategory(params.slug);
@@ -39,14 +37,16 @@ function CategoryPage() {
 
   const [sub, setSub] = useState<string | null>(null);
   const [sort, setSort] = useState<SortOption>("featured");
-  const [range, setRange] = useState({ min: 0, max: PRICE_BOUND });
+  const [range, setRange] = useState<{ min?: number; max?: number }>({});
 
   const list = useMemo(() => {
-    const lo = Math.min(range.min, range.max);
-    const hi = Math.max(range.min, range.max);
-    const filtered = all
-      .filter((p) => (sub ? p.subcategory === sub : true))
-      .filter((p) => p.price >= lo && p.price <= hi);
+    let filtered = all.filter((p) => (sub ? p.subcategory === sub : true));
+    if (range.min !== undefined && !isNaN(range.min)) {
+      filtered = filtered.filter((p) => p.price >= range.min!);
+    }
+    if (range.max !== undefined && !isNaN(range.max)) {
+      filtered = filtered.filter((p) => p.price <= range.max!);
+    }
     return sortProducts(filtered, sort);
   }, [all, sub, sort, range]);
 
@@ -95,11 +95,11 @@ function CategoryPage() {
               </ul>
             </div>
 
-            <PriceRange min={range.min} max={range.max} bound={PRICE_BOUND} onChange={setRange} />
+            <PriceRange min={range.min} max={range.max} onChange={setRange} />
 
             <Link
               to="/shop"
-              search={{ q: undefined, category: category.slug, min: 0, max: PRICE_BOUND, sort: "featured" }}
+              search={{ q: undefined, category: category.slug, min: undefined, max: undefined, sort: "featured" }}
               className="inline-block border border-border px-3 py-2 text-xs uppercase tracking-widest hover:border-primary hover:text-primary"
             >
               Search this category

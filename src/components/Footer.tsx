@@ -46,7 +46,7 @@ export function Footer() {
               </li>
             ))}
             <li>
-              <Link to="/shop" search={{ q: undefined, category: undefined, min: 0, max: 250000, sort: "featured" }} className="hover:text-primary">
+              <Link to="/shop" search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }} className="hover:text-primary">
                 All products
               </Link>
             </li>

@@ -18,7 +18,7 @@ export function Header() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ to: "/shop", search: { q: q || undefined, category: undefined, min: 0, max: 250000, sort: "featured" } });
+    navigate({ to: "/shop", search: { q: q || undefined, category: undefined, min: undefined, max: undefined, sort: "featured" } });
     setOpen(false);
   };
 
@@ -124,7 +124,7 @@ export function Header() {
           </Link>
           <Link
             to="/shop"
-            search={{ q: undefined, category: undefined, min: 0, max: 250000, sort: "featured" }}
+            search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }}
             className="py-3 hover:text-primary"
           >
             Shop all
@@ -167,7 +167,7 @@ export function Header() {
             </form>
             <Link
               to="/shop"
-              search={{ q: undefined, category: undefined, min: 0, max: 250000, sort: "featured" }}
+              search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }}
               onClick={() => setOpen(false)}
               className="block py-2 text-sm font-bold uppercase tracking-widest"
             >

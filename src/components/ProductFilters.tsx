@@ -35,51 +35,66 @@ export function SortSelect({
 export function PriceRange({
   min,
   max,
-  bound,
+  bound = 1000000,
   onChange,
 }: {
-  min: number;
-  max: number;
-  bound: number;
-  onChange: (next: { min: number; max: number }) => void;
+  min?: number;
+  max?: number;
+  bound?: number;
+  onChange: (next: { min?: number; max?: number }) => void;
 }) {
+  const currentMin = min ?? 0;
+  const currentMax = max ?? bound;
+  const isFiltering = min !== undefined || max !== undefined;
+
   return (
     <div>
-      <h2 className="mb-3 text-sm tracking-widest">Price range</h2>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-sm tracking-widest">Price range</h2>
+        {isFiltering && (
+          <button
+            type="button"
+            onClick={() => onChange({ min: undefined, max: undefined })}
+            className="text-[11px] text-primary hover:underline"
+          >
+            Reset
+          </button>
+        )}
+      </div>
       <div className="flex items-center gap-2">
         <input
           type="number"
-          value={min}
+          placeholder="Min"
+          value={min !== undefined ? min : ""}
           min={0}
-          step={1000}
+          step={5000}
           aria-label="Minimum price"
-          onChange={(e) => onChange({ min: Math.max(0, Number(e.target.value) || 0), max })}
-          className="h-9 w-full border border-input bg-secondary/40 px-2 text-sm outline-none focus:border-primary"
+          onChange={(e) => {
+            const val = e.target.value === "" ? undefined : Math.max(0, Number(e.target.value) || 0);
+            onChange({ min: val, max });
+          }}
+          className="h-9 w-full border border-input bg-secondary/40 px-2 text-xs outline-none focus:border-primary"
         />
         <span className="text-xs text-muted-foreground">to</span>
         <input
           type="number"
-          value={max}
+          placeholder="Max (₨)"
+          value={max !== undefined ? max : ""}
           min={0}
-          step={1000}
+          step={5000}
           aria-label="Maximum price"
-          onChange={(e) => onChange({ min, max: Math.max(0, Number(e.target.value) || 0) })}
-          className="h-9 w-full border border-input bg-secondary/40 px-2 text-sm outline-none focus:border-primary"
+          onChange={(e) => {
+            const val = e.target.value === "" ? undefined : Math.max(0, Number(e.target.value) || 0);
+            onChange({ min, max: val });
+          }}
+          className="h-9 w-full border border-input bg-secondary/40 px-2 text-xs outline-none focus:border-primary"
         />
       </div>
-      <input
-        type="range"
-        min={0}
-        max={bound}
-        step={1000}
-        value={Math.min(max, bound)}
-        onChange={(e) => onChange({ min, max: Number(e.target.value) })}
-        className="mt-3 w-full accent-primary"
-        aria-label="Maximum price slider"
-      />
-      <p className="mt-1 text-xs text-muted-foreground">
-        {formatPKR(min)} — {formatPKR(max)}
-      </p>
+      {isFiltering && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Showing: {formatPKR(currentMin)} — {formatPKR(currentMax)}
+        </p>
+      )}
     </div>
   );
 }

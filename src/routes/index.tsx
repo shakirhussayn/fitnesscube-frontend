@@ -62,7 +62,7 @@ function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/shop"
-              search={{ q: undefined, category: undefined, min: 0, max: 250000, sort: "featured" }}
+              search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }}
               className="inline-flex items-center gap-2 bg-primary px-6 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground hover:bg-primary/85"
             >
               Shop now <ArrowRight className="h-4 w-4" />
@@ -99,7 +99,7 @@ function Home() {
           <h2 className="text-3xl md:text-4xl">Shop by category</h2>
           <Link
             to="/shop"
-            search={{ q: undefined, category: undefined, min: 0, max: 250000, sort: "featured" }}
+            search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }}
             className="text-xs font-bold uppercase tracking-widest text-primary hover:underline"
           >
             View all
