@@ -2,8 +2,8 @@ import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Heart, Minus, Plus, Truck, ShieldCheck, Wrench } from "lucide-react";
 import { toast } from "sonner";
-import { getProduct, type Product } from "@/data/products";
-import { useCatalog, productImagesList } from "@/lib/catalog";
+import { type Product } from "@/data/products";
+import { useCatalog, productImagesList, fetchProductBySlug } from "@/lib/catalog";
 import { formatPKR } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
@@ -12,17 +12,17 @@ import { Stars } from "@/components/Stars";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/product/$slug")({
-  loader: ({ params }) => {
-    const product = getProduct(params.slug);
+  loader: async ({ params }) => {
+    const product = await fetchProductBySlug(params.slug);
     if (!product) throw notFound();
     return { product };
   },
   head: ({ loaderData }) => {
-    if (!loaderData) {
+    if (!loaderData?.product) {
       return { meta: [{ title: "Product not found — FitnessCube" }, { name: "robots", content: "noindex" }] };
     }
     const { product } = loaderData;
-    const description = product.description.slice(0, 155);
+    const description = (product.description || "").slice(0, 155);
     return {
       meta: [
         { title: `${product.name} — FitnessCube` },
@@ -36,9 +36,21 @@ export const Route = createFileRoute("/product/$slug")({
 });
 
 function ProductPage() {
-  const { product: loaded } = Route.useLoaderData() as { product: Product };
+  const loaderData = Route.useLoaderData() as { product: Product } | undefined;
+  const { slug } = Route.useParams();
   const catalog = useCatalog();
-  const product = catalog.find((p) => p.slug === loaded.slug) ?? loaded;
+  const product = catalog.find((p) => p.slug === slug) ?? loaderData?.product;
+
+  if (!product) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-20 text-center">
+        <h1 className="text-3xl font-bold">Product not found</h1>
+        <Link to="/shop" className="mt-4 inline-block bg-primary px-6 py-2 text-sm text-primary-foreground">
+          Browse shop
+        </Link>
+      </div>
+    );
+  }
 
 
   const cart = useCart();

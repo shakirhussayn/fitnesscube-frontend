@@ -7,9 +7,20 @@ import { PriceRange, SortSelect, sortProducts, type SortOption } from "@/compone
 
 export const Route = createFileRoute("/category/$slug")({
   loader: ({ params }) => {
-    const category = getCategory(params.slug);
-    if (!category) throw notFound();
-    return { category };
+    const found = getCategory(params.slug);
+    if (found) return { category: found };
+    const formattedName = params.slug
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+    return {
+      category: {
+        slug: params.slug,
+        name: formattedName,
+        blurb: `Shop ${formattedName} equipment and accessories online with nationwide delivery.`,
+        image: "",
+      },
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {

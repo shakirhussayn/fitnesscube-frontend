@@ -130,6 +130,23 @@ export function useCatalog(): Product[] {
   return data;
 }
 
+export async function fetchProductBySlug(slug: string): Promise<Product | undefined> {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .maybeSingle();
+    if (data && !error) {
+      return rowToProduct(data as unknown as ProductRow);
+    }
+  } catch (err) {
+    console.error("fetchProductBySlug error:", err);
+  }
+  return fallbackProducts.find((p) => p.slug === slug);
+}
+
 export function useCatalogProduct(slug: string): Product | undefined {
   return useCatalog().find((p) => p.slug === slug);
 }
