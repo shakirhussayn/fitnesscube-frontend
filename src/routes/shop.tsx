@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { categories } from "@/data/products";
+import { useCategories } from "@/lib/categories";
 import { useCatalog } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { PriceRange, SortSelect, sortProducts, type SortOption } from "@/components/ProductFilters";
@@ -52,6 +52,7 @@ export const Route = createFileRoute("/shop")({
 function Shop() {
   const { q, category, min, max, sort } = Route.useSearch();
   const navigate = useNavigate({ from: "/shop" });
+  const { data: categories = [] } = useCategories();
   const [term, setTerm] = useState(q ?? "");
 
   useEffect(() => {

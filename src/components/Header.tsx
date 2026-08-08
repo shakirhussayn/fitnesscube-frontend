@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X, Phone, Heart, LayoutDashboard } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { categories } from "@/data/products";
+import { useCategories } from "@/lib/categories";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { useIsAdmin } from "@/lib/admin";
@@ -13,6 +13,7 @@ export function Header() {
   const { user } = useAuth();
   const { isAdmin } = useIsAdmin();
   const navigate = useNavigate();
+  const { data: categories = [] } = useCategories();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
 

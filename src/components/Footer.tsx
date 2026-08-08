@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { categories } from "@/data/products";
+import { useCategories } from "@/lib/categories";
 
 export function Footer() {
+  const { data: categories = [] } = useCategories();
   return (
     <footer className="mt-20 border-t border-border bg-card">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4">

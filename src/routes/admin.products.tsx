@@ -6,7 +6,7 @@ import { Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPKR } from "@/lib/format";
 import { imageFor, imageKeys, productImagesList, type AdminProduct } from "@/lib/catalog";
-import { categories } from "@/data/products";
+import { useCategories } from "@/lib/categories";
 import { useAdminProducts } from "@/lib/admin";
 
 export const Route = createFileRoute("/admin/products")({
@@ -36,7 +36,7 @@ const emptyDraft: Draft = {
   brand: "FitnessCube",
   price: "",
   old_price: "",
-  category: categories[0]?.slug ?? "cardio-equipment",
+  category: "cardio-equipment",
   subcategory: "General",
   image_key: "treadmill",
   in_stock: true,
@@ -76,6 +76,7 @@ function slugify(value: string) {
 function AdminProducts() {
   const products = useAdminProducts();
   const queryClient = useQueryClient();
+  const { data: categories = [] } = useCategories();
   const [editing, setEditing] = useState<string | "new" | null>(null);
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [saving, setSaving] = useState(false);

@@ -3,7 +3,7 @@ import { ArrowRight, Truck, ShieldCheck, Wrench, CreditCard } from "lucide-react
 import heroTreadmill from "@/assets/hero-treadmill.jpg";
 import heroWeights from "@/assets/hero-weights.jpg";
 import heroHomegym from "@/assets/hero-homegym.jpg";
-import { categories } from "@/data/products";
+import { useCategories } from "@/lib/categories";
 import { useCatalog } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 
@@ -35,6 +35,7 @@ const perks = [
 
 function Home() {
   const catalog = useCatalog();
+  const { data: categories = [] } = useCategories();
   const featured = catalog.filter((p) => p.tags.includes("featured")).slice(0, 8);
   const bestsellers = catalog.filter((p) => p.tags.includes("bestseller")).slice(0, 4);
   const onSale = catalog.filter((p) => p.oldPrice).slice(0, 4);
