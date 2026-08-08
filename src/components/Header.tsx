@@ -27,9 +27,20 @@ export function Header() {
       <div className="border-b border-border bg-secondary/60">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
           <p>Free delivery on orders over ₨ 25,000 across Pakistan</p>
-          <a href="tel:+923372486635" className="hidden items-center gap-1.5 hover:text-foreground sm:flex">
-            <Phone className="h-3 w-3" /> 0337 2486635
-          </a>
+          <div className="hidden sm:flex items-center gap-4">
+            <a
+              href="https://wa.me/923372486635?text=Hi%20FitnessCube!%20I%20have%20an%20inquiry."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 font-bold text-emerald-500 hover:text-emerald-400 transition-colors"
+            >
+              <span>💬 WhatsApp: 0337 2486635</span>
+            </a>
+            <span className="opacity-40">|</span>
+            <a href="tel:+923372486635" className="flex items-center gap-1.5 hover:text-foreground">
+              <Phone className="h-3 w-3" /> Call: 0337 2486635
+            </a>
+          </div>
         </div>
       </div>
 
