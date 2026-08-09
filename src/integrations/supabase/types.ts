@@ -24,7 +24,7 @@ export type Database = {
           product_slug: string
           quantity: number
           unit_price: number
-          user_id: string
+          user_id: string | null
           variant: string | null
         }
         Insert: {
@@ -36,7 +36,7 @@ export type Database = {
           product_slug: string
           quantity?: number
           unit_price: number
-          user_id: string
+          user_id?: string | null
           variant?: string | null
         }
         Update: {
@@ -76,7 +76,7 @@ export type Database = {
           status: string
           subtotal: number
           total: number
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           address: string
@@ -92,7 +92,7 @@ export type Database = {
           status?: string
           subtotal?: number
           total?: number
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           address?: string
@@ -108,7 +108,7 @@ export type Database = {
           status?: string
           subtotal?: number
           total?: number
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
