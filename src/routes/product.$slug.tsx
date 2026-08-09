@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Heart, Minus, Plus, Truck, ShieldCheck, Wrench } from "lucide-react";
+import { Heart, Minus, Plus, Truck, ShieldCheck, Wrench, Youtube, FileText, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { type Product } from "@/data/products";
 import { useCatalog, productImagesList, fetchProductBySlug } from "@/lib/catalog";
@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { Stars } from "@/components/Stars";
 import { ProductCard } from "@/components/ProductCard";
+import { useBundles } from "@/lib/bundles";
 
 export const Route = createFileRoute("/product/$slug")({
   loader: async ({ params }) => {
@@ -66,6 +67,20 @@ function ProductPage() {
   const related = catalog
     .filter((p) => p.category === product.category && p.slug !== product.slug)
     .slice(0, 4);
+
+  const { data: allBundles = [] } = useBundles();
+  const bundle = allBundles.find((b) => b.main_product_slug === product.slug);
+  const bundleProducts = bundle
+    ? catalog.filter((p) => bundle.companion_slugs.includes(p.slug))
+    : [];
+
+  const youtubeUrl = (product as any).youtubeUrl as string | null;
+  const manualUrl = (product as any).manualUrl as string | null;
+
+  // Convert youtube watch URL to embed URL
+  const youtubeEmbedUrl = youtubeUrl
+    ? youtubeUrl.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/")
+    : null;
 
   const addToWishlist = async () => {
     if (!user) {
@@ -287,6 +302,70 @@ function ProductPage() {
           )}
         </div>
       </div>
+
+      {/* ── YouTube video ──────────────────────────────────────────────── */}
+      {youtubeEmbedUrl && (
+        <div className="mt-10 border-t border-border pt-8">
+          <h2 className="mb-4 flex items-center gap-2 text-xl">
+            <Youtube className="h-5 w-5 text-red-500" />
+            Installation &amp; Assembly Guide
+          </h2>
+          <div className="aspect-video w-full max-w-3xl overflow-hidden border border-border">
+            <iframe
+              src={youtubeEmbedUrl}
+              title={`${product.name} video guide`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="h-full w-full"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ── Manual download ───────────────────────────────────────────── */}
+      {manualUrl && (
+        <div className="mt-6">
+          <a
+            href={manualUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-2 border border-border px-5 py-2.5 text-sm font-bold uppercase tracking-widest hover:border-primary hover:text-primary"
+          >
+            <FileText className="h-4 w-4" />
+            Download User Manual (PDF)
+          </a>
+        </div>
+      )}
+
+      {/* ── Frequently Bought Together ────────────────────────────────── */}
+
+      {bundleProducts.length > 0 && (
+        <div className="mt-16 border border-border bg-secondary/20 p-6">
+          <h2 className="mb-1 flex items-center gap-2 text-xl">
+            <ShoppingBag className="h-5 w-5 text-primary" />
+            {bundle?.bundle_name ?? "Frequently Bought Together"}
+          </h2>
+          <p className="mb-5 text-sm text-muted-foreground">Customers who bought this also bought</p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {bundleProducts.map((p) => (
+              <ProductCard key={p.slug} product={p} />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              bundleProducts.forEach((p) => {
+                cart.add({ slug: p.slug, name: p.name, price: p.price, image: p.image }, 1);
+              });
+              toast.success(`${bundleProducts.length} items added to cart`);
+            }}
+            className="mt-4 flex items-center gap-2 border border-primary bg-primary/10 px-5 py-2.5 text-sm font-bold uppercase tracking-widest text-primary hover:bg-primary hover:text-primary-foreground"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            Add All {bundleProducts.length} to Cart
+          </button>
+        </div>
+      )}
 
       {related.length > 0 && (
         <div className="mt-16">

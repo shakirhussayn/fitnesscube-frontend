@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-rout
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { FolderOpen, LayoutDashboard, Package, ShoppingBag, Users } from "lucide-react";
+import { FolderOpen, LayoutDashboard, Package, ShoppingBag, Users, ShieldCheck, Truck, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAdminExists, useIsAdmin } from "@/lib/admin";
@@ -19,11 +19,14 @@ export const Route = createFileRoute("/admin")({
 });
 
 const tabs = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/admin/orders", label: "Orders", icon: ShoppingBag, exact: false },
-  { to: "/admin/products", label: "Products", icon: Package, exact: false },
-  { to: "/admin/categories", label: "Categories", icon: FolderOpen, exact: false },
-  { to: "/admin/customers", label: "Customers", icon: Users, exact: false },
+  { to: "/admin",           label: "Dashboard",  icon: LayoutDashboard, exact: true  },
+  { to: "/admin/orders",    label: "Orders",     icon: ShoppingBag,     exact: false },
+  { to: "/admin/products",  label: "Products",   icon: Package,         exact: false },
+  { to: "/admin/categories",label: "Categories", icon: FolderOpen,      exact: false },
+  { to: "/admin/customers", label: "Customers",  icon: Users,           exact: false },
+  { to: "/admin/warranty",  label: "Warranty",   icon: ShieldCheck,     exact: false },
+  { to: "/admin/shipping",  label: "Shipping",   icon: Truck,           exact: false },
+  { to: "/admin/bundles",   label: "Bundles",    icon: Gift,            exact: false },
 ] as const;
 
 function AdminLayout() {

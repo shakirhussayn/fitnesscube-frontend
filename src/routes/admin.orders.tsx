@@ -12,12 +12,17 @@ export const Route = createFileRoute("/admin/orders")({
 });
 
 const statusStyles: Record<string, string> = {
-  pending: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-  confirmed: "bg-blue-500/15 text-blue-600 dark:text-blue-400",
-  shipped: "bg-purple-500/15 text-purple-600 dark:text-purple-400",
-  delivered: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-  cancelled: "bg-destructive/15 text-destructive",
+  pending:                 "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+  confirmed:               "bg-blue-500/15 text-blue-600 dark:text-blue-400",
+  dispatched:              "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400",
+  "awaiting-installation": "bg-orange-500/15 text-orange-600 dark:text-orange-400",
+  installed:               "bg-teal-500/15 text-teal-600 dark:text-teal-400",
+  delivered:               "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+  "warranty-claim":        "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
+  cancelled:               "bg-destructive/15 text-destructive",
+  refunded:                "bg-rose-500/15 text-rose-600 dark:text-rose-400",
 };
+
 
 function AdminOrders() {
   const orders = useAdminOrders();

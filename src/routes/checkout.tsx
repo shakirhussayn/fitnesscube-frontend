@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ChevronDown, ChevronUp, UserPlus } from "lucide-react";
@@ -6,6 +6,7 @@ import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { formatPKR } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
+import { useShippingRules, calcShipping } from "@/lib/shipping";
 
 export const Route = createFileRoute("/checkout")({
   ssr: false,
@@ -41,7 +42,11 @@ function Checkout() {
     payment_method: "cod",
   });
 
-  const shipping = cart.subtotal > 25000 || cart.subtotal === 0 ? 0 : 1500;
+  const { data: shippingRules = [] } = useShippingRules();
+  const shipping = useMemo(
+    () => (cart.subtotal === 0 ? 0 : calcShipping(form.city, cart.subtotal, shippingRules)),
+    [form.city, cart.subtotal, shippingRules],
+  );
   const total = cart.subtotal + shipping;
 
   // Pre-fill from logged-in user profile

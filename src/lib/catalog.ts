@@ -77,6 +77,8 @@ export type ProductRow = {
   variants: unknown;
   sort_order: number;
   is_active: boolean;
+  youtube_url: string | null;
+  manual_url: string | null;
 };
 
 export type AdminProduct = Product & { id: string; imageKey: string; isActive: boolean; sortOrder: number };
@@ -102,6 +104,8 @@ export function rowToProduct(row: ProductRow): AdminProduct {
     ...(row.variants ? { variants: row.variants as NonNullable<Product["variants"]> } : {}),
     isActive: row.is_active,
     sortOrder: row.sort_order,
+    youtubeUrl: row.youtube_url ?? null,
+    manualUrl: row.manual_url ?? null,
   } as AdminProduct;
 }
 

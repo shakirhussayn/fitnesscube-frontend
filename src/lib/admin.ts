@@ -3,7 +3,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { rowToProduct, type AdminProduct, type ProductRow } from "@/lib/catalog";
 
-export const ORDER_STATUSES = ["pending", "confirmed", "shipped", "delivered", "cancelled"] as const;
+export const ORDER_STATUSES = [
+  "pending",
+  "confirmed",
+  "dispatched",
+  "awaiting-installation",
+  "installed",
+  "delivered",
+  "warranty-claim",
+  "cancelled",
+  "refunded",
+] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export type AdminOrder = {
