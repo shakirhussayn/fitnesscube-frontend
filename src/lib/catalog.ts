@@ -34,30 +34,46 @@ export const FALLBACK_IMAGE = treadmill;
 
 export const imageKeys = Object.keys(productImages);
 
-export function imageFor(key: string | null | undefined) {
-  if (!key) return FALLBACK_IMAGE;
-  const trimmed = key.trim();
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:")) return trimmed;
-  return productImages[trimmed] || FALLBACK_IMAGE;
-}
-
 export function productImagesList(key: string | null | undefined): string[] {
-  if (!key) return [treadmill];
+  if (!key || !key.trim()) return [FALLBACK_IMAGE];
   const lines = key.split("\n").map((k) => k.trim()).filter(Boolean);
   const result: string[] = [];
+
   for (const line of lines) {
     if (line.startsWith("data:") || line.startsWith("http://") || line.startsWith("https://")) {
-      result.push(line);
+      if (!line.startsWith("data:") && line.includes(",")) {
+        line.split(",").forEach((sub) => {
+          const s = sub.trim();
+          if (s) {
+            if (s.startsWith("http://") || s.startsWith("https://")) result.push(s);
+            else if (productImages[s]) result.push(productImages[s]);
+          }
+        });
+      } else {
+        result.push(line);
+      }
     } else if (line.includes(",")) {
       line.split(",").forEach((item) => {
         const sub = item.trim();
-        if (sub) result.push(imageFor(sub));
+        if (sub) {
+          if (sub.startsWith("http://") || sub.startsWith("https://") || sub.startsWith("data:")) {
+            result.push(sub);
+          } else if (productImages[sub]) {
+            result.push(productImages[sub]);
+          }
+        }
       });
-    } else {
-      result.push(imageFor(line));
+    } else if (productImages[line]) {
+      result.push(productImages[line]);
     }
   }
-  return result.length > 0 ? result : [treadmill];
+
+  return result.length > 0 ? result : [FALLBACK_IMAGE];
+}
+
+export function imageFor(key: string | null | undefined): string {
+  const list = productImagesList(key);
+  return list[0] || FALLBACK_IMAGE;
 }
 
 export type ProductRow = {
