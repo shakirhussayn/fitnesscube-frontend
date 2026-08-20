@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff, Pencil, Plus, Trash2, CheckSquare, Square, Youtube, FileText, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPKR } from "@/lib/format";
-import { imageFor, imageKeys, productImagesList, type AdminProduct } from "@/lib/catalog";
+import { imageFor, imageKeys, productImagesList, FALLBACK_IMAGE, type AdminProduct } from "@/lib/catalog";
 import { useCategories } from "@/lib/categories";
 import { useAdminProducts } from "@/lib/admin";
 
@@ -279,6 +279,14 @@ function AdminProducts() {
     toast.success("Set as main cover photo!");
   };
 
+  const removePhoto = (index: number) => {
+    const imgList = productImagesList(draft.image_key);
+    if (index < 0 || index >= imgList.length) return;
+    imgList.splice(index, 1);
+    setDraft((prev) => ({ ...prev, image_key: imgList.join("\n") }));
+    toast.success("Photo removed!");
+  };
+
   const remove = async (p: AdminProduct) => {
     if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
     const { error } = await supabase.from("products").delete().eq("id", p.id);
@@ -412,14 +420,33 @@ function AdminProducts() {
                     </button>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3 pt-1">
                   {productImagesList(draft.image_key).map((imgUrl, i) => (
-                    <div key={i} className="group relative">
-                      <img src={imgUrl} alt="Preview" className={`h-16 w-16 border-2 object-cover ${i === 0 ? "border-primary" : "border-border"}`} />
+                    <div key={i} className="group relative h-20 w-20 border border-border bg-secondary">
+                      <img
+                        src={imgUrl}
+                        alt="Preview"
+                        onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
+                        className={`h-full w-full object-cover ${i === 0 ? "border-2 border-primary" : ""}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(i)}
+                        className="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow hover:bg-destructive/90 transition-transform hover:scale-110"
+                        title="Delete this photo"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                       {i === 0 ? (
-                        <span className="absolute bottom-0 left-0 right-0 bg-primary py-0.5 text-center text-[9px] font-bold uppercase text-primary-foreground">Main</span>
+                        <span className="absolute bottom-0 left-0 right-0 bg-primary py-0.5 text-center text-[9px] font-bold uppercase text-primary-foreground">
+                          Main
+                        </span>
                       ) : (
-                        <button type="button" onClick={() => makePrimary(i)} className="absolute inset-0 hidden items-center justify-center bg-black/75 p-1 text-center text-[9px] font-bold uppercase text-white group-hover:flex">
+                        <button
+                          type="button"
+                          onClick={() => makePrimary(i)}
+                          className="absolute bottom-0 left-0 right-0 hidden bg-black/80 py-1 text-center text-[9px] font-bold uppercase text-white group-hover:block hover:bg-black"
+                        >
                           Set Main
                         </button>
                       )}

@@ -30,13 +30,15 @@ export const productImages: Record<string, string> = {
   protein,
 };
 
+export const FALLBACK_IMAGE = treadmill;
+
 export const imageKeys = Object.keys(productImages);
 
 export function imageFor(key: string | null | undefined) {
-  if (!key) return treadmill;
+  if (!key) return FALLBACK_IMAGE;
   const trimmed = key.trim();
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:")) return trimmed;
-  return productImages[trimmed] || treadmill;
+  return productImages[trimmed] || FALLBACK_IMAGE;
 }
 
 export function productImagesList(key: string | null | undefined): string[] {

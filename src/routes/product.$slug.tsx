@@ -3,7 +3,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Heart, Minus, Plus, Truck, ShieldCheck, Wrench, Youtube, FileText, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { type Product } from "@/data/products";
-import { useCatalog, productImagesList, fetchProductBySlug } from "@/lib/catalog";
+import { useCatalog, productImagesList, fetchProductBySlug, FALLBACK_IMAGE } from "@/lib/catalog";
 import { formatPKR } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
@@ -126,10 +126,14 @@ function ProductPage() {
         <div className="space-y-3">
           <div className="border border-border bg-secondary">
             <img
-              src={currentImg}
+              src={currentImg || FALLBACK_IMAGE}
               alt={product.name}
               width={1200}
               height={1200}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = FALLBACK_IMAGE;
+              }}
               className="aspect-square w-full object-cover"
             />
           </div>

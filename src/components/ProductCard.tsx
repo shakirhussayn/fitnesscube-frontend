@@ -4,6 +4,7 @@ import type { Product } from "@/data/products";
 import { formatPKR } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { Stars } from "@/components/Stars";
+import { FALLBACK_IMAGE } from "@/lib/catalog";
 
 export function ProductCard({ product }: { product: Product }) {
   const cart = useCart();
@@ -17,11 +18,15 @@ export function ProductCard({ product }: { product: Product }) {
         className="relative block overflow-hidden bg-secondary"
       >
         <img
-          src={product.image}
+          src={product.image || FALLBACK_IMAGE}
           alt={product.name}
           loading="lazy"
           width={900}
           height={900}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = FALLBACK_IMAGE;
+          }}
           className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute left-0 top-0 flex flex-col items-start gap-1 p-2">
