@@ -3,7 +3,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Heart, Minus, Plus, Truck, ShieldCheck, Wrench, Youtube, FileText, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { type Product } from "@/data/products";
-import { useCatalog, productImagesList, fetchProductBySlug } from "@/lib/catalog";
+import { useCatalog, productImagesList, fetchProductBySlug, imageFor } from "@/lib/catalog";
 import { formatPKR } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
@@ -130,6 +130,9 @@ function ProductPage() {
               alt={product.name}
               width={1200}
               height={1200}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = imageFor("");
+              }}
               className="aspect-square w-full object-cover"
             />
           </div>
@@ -144,7 +147,14 @@ function ProductPage() {
                     currentImg === imgUrl ? "border-primary" : "border-border hover:border-primary/50"
                   }`}
                 >
-                  <img src={imgUrl} alt="" className="h-full w-full object-cover" />
+                  <img
+                    src={imgUrl}
+                    alt=""
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = imageFor("");
+                    }}
+                    className="h-full w-full object-cover"
+                  />
                 </button>
               ))}
             </div>

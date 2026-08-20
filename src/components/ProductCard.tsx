@@ -1,13 +1,20 @@
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import type { Product } from "@/data/products";
 import { formatPKR } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { Stars } from "@/components/Stars";
+import treadmillFallback from "@/assets/p-treadmill.jpg";
 
 export function ProductCard({ product }: { product: Product }) {
   const cart = useCart();
   const hasVariants = Boolean(product.variants);
+  const [imgSrc, setImgSrc] = useState(product.image);
+
+  useEffect(() => {
+    setImgSrc(product.image);
+  }, [product.image]);
 
   return (
     <article className="group flex flex-col border border-border bg-card transition-colors hover:border-primary/60">
@@ -17,11 +24,14 @@ export function ProductCard({ product }: { product: Product }) {
         className="relative block overflow-hidden bg-secondary"
       >
         <img
-          src={product.image}
+          src={imgSrc || treadmillFallback}
           alt={product.name}
           loading="lazy"
           width={900}
           height={900}
+          onError={() => {
+            if (imgSrc !== treadmillFallback) setImgSrc(treadmillFallback);
+          }}
           className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute left-0 top-0 flex flex-col items-start gap-1 p-2">
