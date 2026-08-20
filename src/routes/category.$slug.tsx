@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getCategory } from "@/data/products";
-import { useCatalog } from "@/lib/catalog";
+import { useCatalog, FALLBACK_IMAGE } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 import { PriceRange, SortSelect, sortProducts, type SortOption } from "@/components/ProductFilters";
 
@@ -64,7 +64,23 @@ function CategoryPage() {
   return (
     <div>
       <div className="relative isolate overflow-hidden border-b border-border">
-        <img src={category.image} alt={category.name} className="absolute inset-0 h-full w-full object-cover" />
+        {category.image ? (
+          <img
+            src={category.image}
+            alt={category.name}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = FALLBACK_IMAGE;
+            }}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <img
+            src={FALLBACK_IMAGE}
+            alt={category.name}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-background/80" />
         <div className="relative mx-auto max-w-7xl px-4 py-16">
           <nav className="mb-3 text-xs uppercase tracking-widest text-muted-foreground">

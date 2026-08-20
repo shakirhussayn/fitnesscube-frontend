@@ -35,7 +35,7 @@ export function ProductCard({ product }: { product: Product }) {
               Sale
             </span>
           )}
-          {product.tags.includes("new") && (
+          {Array.isArray(product.tags) && product.tags.includes("new") && (
             <span className="bg-accent px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
               New
             </span>

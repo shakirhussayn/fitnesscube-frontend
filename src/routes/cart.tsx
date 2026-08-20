@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { formatPKR } from "@/lib/format";
+import { useShippingRules, calcShipping } from "@/lib/shipping";
+import { FALLBACK_IMAGE } from "@/lib/catalog";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -18,7 +20,8 @@ export const Route = createFileRoute("/cart")({
 
 function CartPage() {
   const cart = useCart();
-  const shipping = cart.subtotal > 25000 || cart.subtotal === 0 ? 0 : 1500;
+  const { data: shippingRules = [] } = useShippingRules();
+  const shipping = cart.subtotal === 0 ? 0 : calcShipping("", cart.subtotal, shippingRules);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
@@ -40,7 +43,15 @@ function CartPage() {
           <div className="divide-y divide-border border border-border">
             {cart.lines.map((line) => (
               <div key={`${line.slug}-${line.variant ?? ""}`} className="flex gap-4 p-4">
-                <img src={line.image} alt={line.name} className="h-24 w-24 shrink-0 object-cover" />
+                <img
+                  src={line.image || FALLBACK_IMAGE}
+                  alt={line.name}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = FALLBACK_IMAGE;
+                  }}
+                  className="h-24 w-24 shrink-0 object-cover"
+                />
                 <div className="flex-1">
                   <Link to="/product/$slug" params={{ slug: line.slug }} className="font-semibold hover:text-primary">
                     {line.name}

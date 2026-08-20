@@ -4,7 +4,7 @@ import heroTreadmill from "@/assets/hero-treadmill.jpg";
 import heroWeights from "@/assets/hero-weights.jpg";
 import heroHomegym from "@/assets/hero-homegym.jpg";
 import { useCategories } from "@/lib/categories";
-import { useCatalog } from "@/lib/catalog";
+import { useCatalog, FALLBACK_IMAGE } from "@/lib/catalog";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/")({
@@ -36,8 +36,12 @@ const perks = [
 function Home() {
   const catalog = useCatalog();
   const { data: categories = [] } = useCategories();
-  const featured = catalog.filter((p) => p.tags.includes("featured")).slice(0, 8);
-  const bestsellers = catalog.filter((p) => p.tags.includes("bestseller")).slice(0, 4);
+  const taggedFeatured = catalog.filter((p) => Array.isArray(p.tags) && p.tags.includes("featured")).slice(0, 8);
+  const featured = taggedFeatured.length > 0 ? taggedFeatured : catalog.slice(0, 8);
+
+  const taggedBestsellers = catalog.filter((p) => Array.isArray(p.tags) && p.tags.includes("bestseller")).slice(0, 4);
+  const bestsellers = taggedBestsellers.length > 0 ? taggedBestsellers : catalog.slice(0, 4);
+
   const onSale = catalog.filter((p) => p.oldPrice).slice(0, 4);
 
   return (
@@ -115,9 +119,13 @@ function Home() {
               className="group relative isolate overflow-hidden border border-border"
             >
               <img
-                src={c.image}
+                src={c.image || FALLBACK_IMAGE}
                 alt={c.name}
                 loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = FALLBACK_IMAGE;
+                }}
                 className="aspect-[4/5] w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
