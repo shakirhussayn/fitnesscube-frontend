@@ -34,23 +34,25 @@ export const imageKeys = Object.keys(productImages);
 
 export function imageFor(key: string | null | undefined) {
   if (!key) return treadmill;
-  const raw = key.trim();
-  if (!raw) return treadmill;
-  const first = raw.split(/[\n,]/).map((s) => s.trim()).filter(Boolean)[0];
-  if (!first) return treadmill;
-  if (first.startsWith("http://") || first.startsWith("https://") || first.startsWith("data:")) return first;
-  return productImages[first] || treadmill;
+  const trimmed = key.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:")) return trimmed;
+  return productImages[trimmed] || treadmill;
 }
 
 export function productImagesList(key: string | null | undefined): string[] {
   if (!key) return [treadmill];
-  const items = key.split(/[\n,]/).map((k) => k.trim()).filter(Boolean);
+  const lines = key.split("\n").map((k) => k.trim()).filter(Boolean);
   const result: string[] = [];
-  for (const item of items) {
-    if (item.startsWith("data:") || item.startsWith("http://") || item.startsWith("https://")) {
-      result.push(item);
+  for (const line of lines) {
+    if (line.startsWith("data:") || line.startsWith("http://") || line.startsWith("https://")) {
+      result.push(line);
+    } else if (line.includes(",")) {
+      line.split(",").forEach((item) => {
+        const sub = item.trim();
+        if (sub) result.push(imageFor(sub));
+      });
     } else {
-      result.push(imageFor(item));
+      result.push(imageFor(line));
     }
   }
   return result.length > 0 ? result : [treadmill];

@@ -270,26 +270,13 @@ function AdminProducts() {
     });
   };
 
-  const getDraftImageList = (key: string): string[] => {
-    if (!key) return [];
-    return key.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
-  };
-
   const makePrimary = (index: number) => {
-    const imgList = getDraftImageList(draft.image_key);
+    const imgList = productImagesList(draft.image_key);
     if (index <= 0 || index >= imgList.length) return;
     const [selected] = imgList.splice(index, 1);
     imgList.unshift(selected);
     setDraft((prev) => ({ ...prev, image_key: imgList.join("\n") }));
     toast.success("Set as main cover photo!");
-  };
-
-  const removePhoto = (index: number) => {
-    const imgList = getDraftImageList(draft.image_key);
-    if (index < 0 || index >= imgList.length) return;
-    const updated = imgList.filter((_, i) => i !== index);
-    setDraft((prev) => ({ ...prev, image_key: updated.join("\n") }));
-    toast.success("Photo deleted");
   };
 
   const remove = async (p: AdminProduct) => {
@@ -425,41 +412,19 @@ function AdminProducts() {
                     </button>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-3 pt-1">
-                  {getDraftImageList(draft.image_key).map((item, i) => {
-                    const imgUrl = imageFor(item);
-                    return (
-                      <div key={i} className="group relative h-20 w-20 overflow-hidden border-2 bg-background transition-all hover:border-primary shadow-sm">
-                        <img
-                          src={imgUrl}
-                          alt={`Photo ${i + 1}`}
-                          className={`h-full w-full object-cover ${i === 0 ? "border-primary" : ""}`}
-                        />
-                        {i === 0 ? (
-                          <span className="absolute bottom-0 inset-x-0 bg-primary py-0.5 text-center text-[9px] font-bold uppercase tracking-wider text-primary-foreground">
-                            Main Cover
-                          </span>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => makePrimary(i)}
-                            className="absolute bottom-0 inset-x-0 hidden bg-black/80 py-1 text-center text-[9px] font-bold uppercase tracking-wider text-white group-hover:block hover:bg-primary"
-                          >
-                            Set Main
-                          </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => removePhoto(i)}
-                          title="Delete photo"
-                          aria-label={`Delete photo ${i + 1}`}
-                          className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-md hover:scale-110 transition-transform"
-                        >
-                          <X className="h-3 w-3" />
+                <div className="flex flex-wrap gap-2">
+                  {productImagesList(draft.image_key).map((imgUrl, i) => (
+                    <div key={i} className="group relative">
+                      <img src={imgUrl} alt="Preview" className={`h-16 w-16 border-2 object-cover ${i === 0 ? "border-primary" : "border-border"}`} />
+                      {i === 0 ? (
+                        <span className="absolute bottom-0 left-0 right-0 bg-primary py-0.5 text-center text-[9px] font-bold uppercase text-primary-foreground">Main</span>
+                      ) : (
+                        <button type="button" onClick={() => makePrimary(i)} className="absolute inset-0 hidden items-center justify-center bg-black/75 p-1 text-center text-[9px] font-bold uppercase text-white group-hover:flex">
+                          Set Main
                         </button>
-                      </div>
-                    );
-                  })}
+                      )}
+                    </div>
+                  ))}
                 </div>
                 <textarea
                   rows={2}
@@ -559,14 +524,7 @@ function AdminProducts() {
                 {selected.has(p.id) ? <CheckSquare className="h-4 w-4 text-primary" /> : <Square className="h-4 w-4" />}
               </button>
             )}
-            <img
-              src={p.image}
-              alt=""
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = imageFor("");
-              }}
-              className="h-12 w-12 shrink-0 object-cover border border-border"
-            />
+            <img src={p.image} alt="" className="h-12 w-12 shrink-0 object-cover" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold">
                 {p.name}
