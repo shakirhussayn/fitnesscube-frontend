@@ -81,22 +81,53 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm tracking-widest">Get in touch</h3>
+          <h3 className="mb-4 text-sm tracking-widest">Our Showrooms</h3>
           <ul className="space-y-3 text-sm text-muted-foreground">
-            <li className="flex gap-2">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              Ground Floor, al Rehman, House No# 01, Co-Operative Housing Society, Block 10-A, Gulshan-e-Iqbal,
-              Karachi 75300
+            <li className="space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-foreground text-xs uppercase tracking-wider">
+                <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                Branch 1 (Rashid Minhas Rd)
+              </div>
+              <p className="text-xs text-muted-foreground pl-5">
+                Shop No. A-59, Rabia Palace, Main Rashid Minhas Rd, Gulshan-e-Iqbal, Karachi
+              </p>
+              <a
+                href="https://maps.app.goo.gl/UityzpBo5hcYmqu4A"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-block pl-5 text-[11px] font-semibold text-primary hover:underline"
+              >
+                View on Google Maps →
+              </a>
             </li>
-            <li className="flex gap-2">
-              <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <a href="tel:+923372486635" className="hover:text-primary">
+
+            <li className="space-y-1 pt-1">
+              <div className="flex items-center gap-1.5 font-bold text-foreground text-xs uppercase tracking-wider">
+                <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                Branch 2 (Gulshan-e-Iqbal)
+              </div>
+              <p className="text-xs text-muted-foreground pl-5">
+                Ground Floor, Al-Rehman, Block 10-A, Gulshan-e-Iqbal, Karachi
+              </p>
+              <a
+                href="https://g.co/kgs/iXwiLB9"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-block pl-5 text-[11px] font-semibold text-primary hover:underline"
+              >
+                View on Google Maps →
+              </a>
+            </li>
+
+            <li className="flex items-center gap-2 pt-2 border-t border-border/50">
+              <Phone className="h-4 w-4 shrink-0 text-primary" />
+              <a href="tel:+923372486635" className="hover:text-primary text-xs font-semibold">
                 0337 2486635
               </a>
             </li>
-            <li className="flex gap-2">
-              <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <a href="mailto:hello@fitnesscube.pk" className="hover:text-primary">
+            <li className="flex items-center gap-2">
+              <Mail className="h-4 w-4 shrink-0 text-primary" />
+              <a href="mailto:hello@fitnesscube.pk" className="hover:text-primary text-xs">
                 hello@fitnesscube.pk
               </a>
             </li>

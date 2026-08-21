@@ -27,7 +27,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <div className="border-b border-border bg-secondary/60">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
-          <p>Now accepting orders via WhatsApp & Online — Nationwide Delivery</p>
+          <p>2 Karachi Showrooms · WhatsApp &amp; Online Orders · Nationwide Delivery</p>
           <div className="hidden sm:flex items-center gap-4">
             <a
               href="https://wa.me/923372486635?text=Hi%20FitnessCube!%20I%20have%20an%20inquiry."

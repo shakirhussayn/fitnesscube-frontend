@@ -207,16 +207,26 @@ function Home() {
               machines for your space and budget — then delivers and installs them for you.
             </p>
             <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
-              <li>· Free layout consultation over WhatsApp</li>
-              <li>· Commercial packages for gyms and hotels</li>
-              <li>· After-sales service in all major cities</li>
+              <li>· 2 Karachi Showrooms — Visit us for live machine demos</li>
+              <li>· Free layout consultation &amp; commercial gym packages</li>
+              <li>· Nationwide delivery and professional installation</li>
+              <li>· 1-year parts &amp; service warranty on all machines</li>
             </ul>
-            <Link
-              to="/contact"
-              className="mt-8 inline-flex items-center gap-2 border border-border px-6 py-3 text-sm font-bold uppercase tracking-widest hover:border-primary hover:text-primary"
-            >
-              Talk to us
-            </Link>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 bg-primary px-6 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground hover:bg-primary/85"
+              >
+                Visit Our Showrooms
+              </Link>
+              <Link
+                to="/shop"
+                search={{ q: undefined, category: undefined, min: undefined, max: undefined, sort: "featured" }}
+                className="inline-flex items-center gap-2 border border-border px-6 py-3 text-sm font-bold uppercase tracking-widest hover:border-primary hover:text-primary"
+              >
+                Browse Equipment
+              </Link>
+            </div>
           </div>
         </div>
       </section>
